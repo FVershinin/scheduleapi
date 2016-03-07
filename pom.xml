@@ -116,10 +116,9 @@
                 <configuration>
                     <changeLogFile>src/main/resources/liquibase/changelog.xml</changeLogFile>
                     <driver>org.postgresql.Driver</driver>
-                    <url>jdbc:postgresql://dev.vk.edu.ee:5432/dbVershinin?Schema=schedule</url>
+                    <url>jdbc:postgresql://dev.vk.edu.ee:5432/dbSchedule</url>
                     <username>${db.user}</username>
                     <password>${db.password}</password>
-                    <defaultSchemaName>schedule</defaultSchemaName>
                     <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                 </configuration>
             </plugin>
