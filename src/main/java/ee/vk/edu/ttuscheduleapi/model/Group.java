@@ -21,12 +21,18 @@ public class Group implements Serializable {
 
     private String name;
 
+    private String language;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private GroupType groupType;
 
     @Column(name = "url_id")
     private Long ScheduleId;
+
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Student> students = Lists.newArrayList();
 
     @OneToMany(mappedBy = "group")
     private List<Timetable> timetables = Lists.newArrayList();
@@ -62,6 +68,14 @@ public class Group implements Serializable {
         return this;
     }
 
+    public String getLanguage(){
+        return language;
+    }
+    public Group setLanguage(String language){
+        this.language = language;
+        return this;
+    }
+
     public GroupType getGroupType() {
         return groupType;
     }
@@ -86,6 +100,15 @@ public class Group implements Serializable {
 
     public Group setTimetables(List<Timetable> timetables) {
         this.timetables = timetables;
+        return this;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public Group setStudents(List<Student> students) {
+        this.students = students;
         return this;
     }
 }

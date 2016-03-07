@@ -1,11 +1,13 @@
 package ee.vk.edu.ttuscheduleapi.model;
 
+import com.google.common.collect.Lists;
 import ee.vk.edu.ttuscheduleapi.enums.LessonType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,10 +20,16 @@ public class Timetable implements Serializable {
     private Long id;
 
     @DateTimeFormat
-    private OffsetDateTime start;
+    private OffsetDateTime date;
 
     @DateTimeFormat
-    private OffsetDateTime end;
+    private OffsetDateTime time_start;
+
+    @DateTimeFormat
+    private OffsetDateTime time_end;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "timetable")
+    private List<Attendance> attendances = Lists.newArrayList();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
@@ -59,20 +67,29 @@ public class Timetable implements Serializable {
     }
 
     public OffsetDateTime getStart() {
-        return start;
+        return time_start;
     }
 
     public Timetable setStart(OffsetDateTime start) {
-        this.start = start;
+        this.time_start = start;
+        return this;
+    }
+
+    public OffsetDateTime getDate(){
+        return date;
+    }
+
+    public Timetable setDate(OffsetDateTime date){
+        this.date = date;
         return this;
     }
 
     public OffsetDateTime getEnd() {
-        return end;
+        return time_end;
     }
 
     public Timetable setEnd(OffsetDateTime end) {
-        this.end = end;
+        this.time_end = end;
         return this;
     }
 
@@ -109,6 +126,15 @@ public class Timetable implements Serializable {
 
     public Timetable setTeacher(Teacher teacher) {
         this.teacher = teacher;
+        return this;
+    }
+
+    public List<Attendance> getAttendances() {
+        return attendances;
+    }
+
+    public Timetable setAttendances(List<Attendance> attendances) {
+        this.attendances = attendances;
         return this;
     }
 }
