@@ -1,0 +1,91 @@
+package ee.vk.edu.ttuscheduleapi.model;
+
+import com.google.common.collect.Lists;
+import ee.vk.edu.ttuscheduleapi.enums.GroupType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
+
+@Entity
+@Table(name = "group")
+public class Group implements Serializable {
+
+    @Id
+    @SequenceGenerator(name="group_id_seq",sequenceName="group_id_seq", allocationSize=1)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE,generator="group_id_seq")
+    private Long id;
+
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private GroupType groupType;
+
+    @Column(name = "url_id")
+    private Long ScheduleId;
+
+    @OneToMany(mappedBy = "group")
+    private List<Timetable> timetables = Lists.newArrayList();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Group group = (Group) o;
+        return Objects.equals(id, group.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Group setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Group setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public GroupType getGroupType() {
+        return groupType;
+    }
+
+    public Group setGroupType(GroupType groupType) {
+        this.groupType = groupType;
+        return this;
+    }
+
+    public Long getScheduleId() {
+        return ScheduleId;
+    }
+
+    public Group setScheduleId(Long scheduleId) {
+        ScheduleId = scheduleId;
+        return this;
+    }
+
+    public List<Timetable> getTimetables() {
+        return timetables;
+    }
+
+    public Group setTimetables(List<Timetable> timetables) {
+        this.timetables = timetables;
+        return this;
+    }
+}
