@@ -136,4 +136,11 @@
                                  referencedTableName="timetable"
                                  referencedColumnNames="id"/>
     </changeSet>
+    <changeSet id="added type to Group table" author="fjodor">
+        <addColumn tableName="group">
+            <column name="type" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
