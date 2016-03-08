@@ -10,4 +10,5 @@ import java.util.List;
 public interface GroupService {
     List<Group> save(List<Group> groups);
     List<Group> findAll();
+    List<Group> saveAll(List<Group> groups);
 }

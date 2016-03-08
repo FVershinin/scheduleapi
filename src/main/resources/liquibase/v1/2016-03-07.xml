@@ -71,8 +71,6 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-
-
     <changeSet id="added table Timetable" author="fjodor and vadim">
         <createTable tableName="timetable">
             <column name="id" type="int" autoIncrement="true">
@@ -87,13 +85,10 @@
             <column name="teacher_id" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="date" type="date">
+            <column name="start" type="timestamp with timezone">
                 <constraints nullable="false"/>
             </column>
-            <column name="time_start" type="time">
-                <constraints nullable="false"/>
-            </column>
-            <column name="time_end" type="time">
+            <column name="end" type="timestamp with timezone">
                 <constraints nullable="false"/>
             </column>
             <column name="type" type="varchar(10)" defaultValue="LECTURE"/>

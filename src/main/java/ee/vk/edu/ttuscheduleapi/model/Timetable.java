@@ -15,18 +15,16 @@ import java.util.Objects;
 @NamedEntityGraph(name = "timetable.detail", attributeNodes = {@NamedAttributeNode("subject"), @NamedAttributeNode("group"), @NamedAttributeNode("teacher")})
 public class Timetable implements Serializable {
     @Id
-    @SequenceGenerator(name="timetable_id_seq",sequenceName="timetable_id_seq", allocationSize=1)
+    @SequenceGenerator(name="timetable_id_seq",sequenceName="timetable_id_seq")
     @GeneratedValue(strategy= GenerationType.SEQUENCE,generator="timetable_id_seq")
     private Long id;
 
     @DateTimeFormat
-    private OffsetDateTime date;
+    private OffsetDateTime start;
 
     @DateTimeFormat
-    private OffsetDateTime time_start;
-
-    @DateTimeFormat
-    private OffsetDateTime time_end;
+    @Column(name = "\"end\"")
+    private OffsetDateTime end;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "timetable")
     private List<Attendance> attendances = Lists.newArrayList();
@@ -67,29 +65,20 @@ public class Timetable implements Serializable {
     }
 
     public OffsetDateTime getStart() {
-        return time_start;
+        return start;
     }
 
     public Timetable setStart(OffsetDateTime start) {
-        this.time_start = start;
-        return this;
-    }
-
-    public OffsetDateTime getDate(){
-        return date;
-    }
-
-    public Timetable setDate(OffsetDateTime date){
-        this.date = date;
+        this.start = start;
         return this;
     }
 
     public OffsetDateTime getEnd() {
-        return time_end;
+        return end;
     }
 
     public Timetable setEnd(OffsetDateTime end) {
-        this.time_end = end;
+        this.end = end;
         return this;
     }
 

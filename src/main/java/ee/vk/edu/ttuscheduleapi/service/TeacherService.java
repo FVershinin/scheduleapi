@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface TeacherService {
     List<Teacher> findAll();
+    Teacher findByFullname(String fullname);
+    List<Teacher> saveAll(List<Teacher> teachers);
 }

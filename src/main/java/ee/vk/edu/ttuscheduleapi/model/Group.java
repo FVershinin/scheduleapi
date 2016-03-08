@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "group")
+@Table(name = "\"group\"")
 public class Group implements Serializable {
 
     @Id
-    @SequenceGenerator(name="group_id_seq",sequenceName="group_id_seq", allocationSize=1)
+    @SequenceGenerator(name="group_id_seq",sequenceName="group_id_seq")
     @GeneratedValue(strategy= GenerationType.SEQUENCE,generator="group_id_seq")
     private Long id;
 
@@ -31,11 +31,11 @@ public class Group implements Serializable {
     private Long ScheduleId;
 
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Student> students = Lists.newArrayList();
+    @OneToMany
+    private List<Student> students;
 
-    @OneToMany(mappedBy = "group")
-    private List<Timetable> timetables = Lists.newArrayList();
+    @OneToMany
+    private List<Timetable> timetables;
 
     @Override
     public boolean equals(Object o) {
@@ -48,6 +48,11 @@ public class Group implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     public Long getId() {

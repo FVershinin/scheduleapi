@@ -22,5 +22,4 @@ public class TeacherController {
         map.put("schedules", teacherService);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
-    }
 }

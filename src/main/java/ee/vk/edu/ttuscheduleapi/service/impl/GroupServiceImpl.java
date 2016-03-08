@@ -29,4 +29,11 @@ public class GroupServiceImpl implements GroupService {
     public List<Group> findAll() {
         return groupRepository.findAll();
     }
+
+    @Override
+    public List<Group> saveAll(List<Group> groups) {
+        return groupRepository.save(groups.stream()
+                .map(x -> Optional.ofNullable(groupRepository.findByName(x.getName())).orElse(x))
+                .collect(Collectors.toList()));
+    }
 }

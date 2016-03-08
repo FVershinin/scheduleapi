@@ -30,6 +30,7 @@ import org.jsoup.nodes.Element;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -45,6 +46,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @EnableScheduling
 public class ScheduleServiceImpl implements ScheduleService {
 
@@ -84,7 +86,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    @Scheduled(cron = "*/1 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void update() throws IOException, ParserException {
         Map<String, Group> groupMap = groupService.findAll().stream().collect(Collectors.toMap(Group::getName, x -> x));
         List<Timetable> timetables = Lists.newArrayList();
@@ -101,8 +103,8 @@ public class ScheduleServiceImpl implements ScheduleService {
                     Timetable timetable = new Timetable();
                     timetable.setStart(getOffsetDateTime(component.getProperty(Property.DTSTART).getValue()));
                     timetable.setEnd(getOffsetDateTime(component.getProperty(Property.DTEND).getValue()));
-                    timetable.setGroup(groupMap.get(getGroupName(description)));
-                    timetable.setTeacher(new Teacher().setFullname(getTeacherFullname(description)));
+                    timetable.setGroup(group);
+                    timetable.setTeacher(getTeacher(description));
                     timetable.setSubject(getSubject(summary));
                     timetable.setLessonType(getLessonType(description));
                     timetables.add(timetable);
@@ -111,20 +113,6 @@ public class ScheduleServiceImpl implements ScheduleService {
             }
         }
         timetableService.save(timetables);
-    }
-
-    private String getTeacherFullname(String description) {
-        Matcher fullname = Pattern.compile("lektor  (.*?)\\n").matcher(description);
-        if(fullname.find())
-            return fullname.group(1);
-        return null;
-    }
-
-    private String getGroupName(String description) {
-        Matcher group = Pattern.compile("rühmad: (.*?)\\n").matcher(description);
-        if(group.find())
-            return group.group(1);
-        return null;
     }
 
     private Subject getSubject(String summary) {
@@ -145,6 +133,17 @@ public class ScheduleServiceImpl implements ScheduleService {
                 return LessonType.UNKNOWN;
         }
     }
+
+    private Teacher getTeacher(String description){
+        Matcher fullname = Pattern.compile("  (.*?)\\n").matcher(description);
+        Teacher teacher = new Teacher();
+        if(fullname.find()){
+            teacher = new Teacher().setFullname(fullname.group(1));
+            teacher.setUsername(String.format("%1$s.%2$s", teacher.getFullname().split(" ")));
+            teacher.setPassword("PASS");
+        }
+        return teacher;
+    };
 
     private OffsetDateTime getOffsetDateTime(String start) {
         return OffsetDateTime.of(LocalDateTime.parse(start, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")), ZoneOffset.ofHours(2));

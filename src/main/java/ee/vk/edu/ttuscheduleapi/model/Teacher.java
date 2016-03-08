@@ -10,11 +10,15 @@ import java.util.Objects;
 public class Teacher implements Serializable{
 
     @Id
-    @SequenceGenerator(name="teacher_id_seq",sequenceName="teacher_id_seq", allocationSize=1)
+    @SequenceGenerator(name="teacher_id_seq",sequenceName="teacher_id_seq")
     @GeneratedValue(strategy= GenerationType.SEQUENCE,generator="teacher_id_seq")
     private Long id;
 
     private String fullname;
+
+    private String username;
+
+    private String password;
 
     @OneToMany
     private List<Timetable> timetables;
@@ -30,6 +34,11 @@ public class Teacher implements Serializable{
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return fullname;
     }
 
     public Long getId() {
@@ -56,6 +65,24 @@ public class Teacher implements Serializable{
 
     public Teacher setTimetables(List<Timetable> timetables) {
         this.timetables = timetables;
+        return this;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Teacher setUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public Teacher setPassword(String password) {
+        this.password = password;
         return this;
     }
 }
