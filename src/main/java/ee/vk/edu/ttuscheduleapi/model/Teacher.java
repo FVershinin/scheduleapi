@@ -20,7 +20,7 @@ public class Teacher implements Serializable{
 
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy = "teacher")
     private List<Timetable> timetables;
 
     @Override

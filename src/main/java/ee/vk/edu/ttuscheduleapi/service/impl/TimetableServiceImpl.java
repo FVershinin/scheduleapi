@@ -1,7 +1,7 @@
 package ee.vk.edu.ttuscheduleapi.service.impl;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import ee.vk.edu.ttuscheduleapi.model.Group;
 import ee.vk.edu.ttuscheduleapi.model.Subject;
 import ee.vk.edu.ttuscheduleapi.model.Teacher;
@@ -11,10 +11,10 @@ import ee.vk.edu.ttuscheduleapi.service.GroupService;
 import ee.vk.edu.ttuscheduleapi.service.SubjectService;
 import ee.vk.edu.ttuscheduleapi.service.TeacherService;
 import ee.vk.edu.ttuscheduleapi.service.TimetableService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,16 +24,16 @@ import java.util.stream.Collectors;
 @Transactional
 public class TimetableServiceImpl implements TimetableService {
 
-    @Inject
+    @Autowired
     private TimetableRepository timetableRepository;
 
-    @Inject
+    @Autowired
     private TeacherService teacherService;
 
-    @Inject
+    @Autowired
     private SubjectService subjectService;
 
-    @Inject
+    @Autowired
     private GroupService groupService;
 
     @Override
@@ -48,7 +48,10 @@ public class TimetableServiceImpl implements TimetableService {
             timetable.setGroup(Optional.ofNullable(groupMap.get(timetable.getGroup().getName())).orElse(timetable.getGroup()));
             timetable.setTeacher(Optional.ofNullable(teacherMap.get(timetable.getTeacher().getUsername())).orElse(timetable.getTeacher()));
             timetable.setSubject(Optional.ofNullable(subjectMap.get(timetable.getSubject().getCode())).orElse(timetable.getSubject()));
+            Timetable temp = timetableRepository.find(timetable.getGroup(), timetable.getSubject(), timetable.getTeacher(), timetable.getStart(), timetable.getEnd());
+            timetable.setId(Optional.ofNullable(temp).orElse(timetable).getId());
         }
         return timetableRepository.save(timetables);
     }
+
 }

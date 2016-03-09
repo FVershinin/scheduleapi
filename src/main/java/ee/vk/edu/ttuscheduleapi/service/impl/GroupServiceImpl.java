@@ -3,10 +3,10 @@ package ee.vk.edu.ttuscheduleapi.service.impl;
 import ee.vk.edu.ttuscheduleapi.model.Group;
 import ee.vk.edu.ttuscheduleapi.repository.GroupRepository;
 import ee.vk.edu.ttuscheduleapi.service.GroupService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class GroupServiceImpl implements GroupService {
 
-    @Inject
+    @Autowired
     private GroupRepository groupRepository;
 
     @Override

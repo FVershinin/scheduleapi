@@ -3,24 +3,23 @@ package ee.vk.edu.ttuscheduleapi;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.OffsetDateTime;
+import java.time.*;
+import java.util.Objects;
 
 /**
  * Created by fjodor on 8.03.16.
  */
 @Converter(autoApply = true)
-public class OffsetDateTimeConverter implements AttributeConverter<OffsetDateTime, Timestamp> {
+public class OffsetDateTimeConverter implements AttributeConverter<ZonedDateTime, Timestamp> {
+
 
     @Override
-    public Timestamp convertToDatabaseColumn(OffsetDateTime offsetDateTime) {
-        Instant instant = Instant.from(offsetDateTime);
-        return Timestamp.from(instant);
+    public Timestamp convertToDatabaseColumn(ZonedDateTime value) {
+        return Timestamp.valueOf(value.toLocalDateTime());
     }
 
     @Override
-    public OffsetDateTime convertToEntityAttribute(Timestamp timestamp) {
-        Instant instant = timestamp.toInstant();
-        return OffsetDateTime.from(instant);
+    public ZonedDateTime convertToEntityAttribute(Timestamp value) {
+        return ZonedDateTime.of(value.toLocalDateTime(), ZoneOffset.UTC);
     }
 }

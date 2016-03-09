@@ -27,17 +27,15 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -53,13 +51,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     private static final String GROUPS_URL = "https://ois.ttu.ee/portal/page?_pageid=35,435155&_dad=portal&_schema=PORTAL&e=-1&e_sem=162&a=1&b={0}&c=-1&d=-1&k=&q=neto&g=";
     private static final String SCHEDULE_URL = "https://ois.ttu.ee/pls/portal/tunniplaan.PRC_EXPORT_DATA?p_page=view_plaan&pn=i&pv=2&pn=e_sem&pv=162&pn=e&pv=-1&pn=b&pv={0}&pn=g&pv={1,number,#}&pn=is_oppejoud&pv=false&pn=q&pv=1";
 
-    @Inject
+    @Autowired
     private CloseableHttpClient httpClient;
 
-    @Inject
+    @Autowired
     private GroupService groupService;
 
-    @Inject
+    @Autowired
     private TimetableService timetableService;
 
     @Override
@@ -88,7 +86,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     @Scheduled(cron = "*/30 * * * * *")
     public void update() throws IOException, ParserException {
-        Map<String, Group> groupMap = groupService.findAll().stream().collect(Collectors.toMap(Group::getName, x -> x));
         List<Timetable> timetables = Lists.newArrayList();
         CalendarBuilder calendarBuilder = new CalendarBuilder();
         for (Group group : groupService.findAll().stream().filter(x -> x.getName().equals("RDIR61")).collect(Collectors.toList())) {
@@ -101,12 +98,12 @@ public class ScheduleServiceImpl implements ScheduleService {
                     String description = component.getProperty(Property.DESCRIPTION).getValue();
                     String summary = component.getProperty(Property.SUMMARY).getValue();
                     Timetable timetable = new Timetable();
-                    timetable.setStart(getOffsetDateTime(component.getProperty(Property.DTSTART).getValue()));
-                    timetable.setEnd(getOffsetDateTime(component.getProperty(Property.DTEND).getValue()));
+                    timetable.setStart(getDateTime(component.getProperty(Property.DTSTART).getValue()));
+                    timetable.setEnd(getDateTime(component.getProperty(Property.DTEND).getValue()));
                     timetable.setGroup(group);
                     timetable.setTeacher(getTeacher(description));
                     timetable.setSubject(getSubject(summary));
-                    timetable.setLessonType(getLessonType(description));
+                    timetable.setLessonType(getLessonType(summary));
                     timetables.add(timetable);
                 }
                 EntityUtils.consume(entity);
@@ -124,14 +121,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     private LessonType getLessonType(String summary){
-        switch (summary){
-            case "loeng":
-                return LessonType.LECTURE;
-            case "praktikum":
-                return LessonType.PRACTICE;
-            default:
-                return LessonType.UNKNOWN;
+        Matcher type = Pattern.compile("->   (.*?)$").matcher(summary);
+        if(type.find()) {
+            switch (type.group(1)) {
+                case "loeng":
+                    return LessonType.LECTURE;
+                case "praktikum":
+                    return LessonType.PRACTICE;
+                default:
+                    return LessonType.UNKNOWN;
+            }
         }
+        return LessonType.UNKNOWN;
     }
 
     private Teacher getTeacher(String description){
@@ -143,9 +144,9 @@ public class ScheduleServiceImpl implements ScheduleService {
             teacher.setPassword("PASS");
         }
         return teacher;
-    };
+    }
 
-    private OffsetDateTime getOffsetDateTime(String start) {
-        return OffsetDateTime.of(LocalDateTime.parse(start, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")), ZoneOffset.ofHours(2));
+    private ZonedDateTime getDateTime(String datetime) {
+        return ZonedDateTime.of(LocalDateTime.parse(datetime, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")), ZoneId.of("Europe/Tallinn"));
     }
 }

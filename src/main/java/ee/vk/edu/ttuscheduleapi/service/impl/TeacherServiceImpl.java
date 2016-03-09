@@ -3,11 +3,12 @@ package ee.vk.edu.ttuscheduleapi.service.impl;
 import ee.vk.edu.ttuscheduleapi.model.Teacher;
 import ee.vk.edu.ttuscheduleapi.repository.TeacherRepository;
 import ee.vk.edu.ttuscheduleapi.service.TeacherService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,12 +19,12 @@ import java.util.stream.Collectors;
 @Transactional
 public class TeacherServiceImpl implements TeacherService {
 
-    @Inject
+    @Autowired
     private TeacherRepository teacherRepository;
 
     @Override
     public List<Teacher> findAll() {
-        return null;
+        return teacherRepository.findAll();
     }
 
     @Override
@@ -33,8 +34,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Teacher> saveAll(List<Teacher> teachers) {
-        return teacherRepository.save(teachers.stream()
-                .map(x -> Optional.ofNullable(teacherRepository.findByUsername(x.getUsername())).orElse(x))
-                .collect(Collectors.toList()));
+        Map<String, Teacher> teacherMap = teacherRepository.findAll().stream().collect(Collectors.toMap(Teacher::getUsername, x -> x, (x, y) -> x));
+        teachers.stream().forEach(x -> x.setId(Optional.ofNullable(teacherMap.get(x.getUsername())).orElse(x).getId()));
+        return teacherRepository.save(teachers);
     }
 }

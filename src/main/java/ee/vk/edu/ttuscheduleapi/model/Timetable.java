@@ -6,7 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,11 +20,11 @@ public class Timetable implements Serializable {
     private Long id;
 
     @DateTimeFormat
-    private OffsetDateTime start;
+    private ZonedDateTime start;
 
     @DateTimeFormat
     @Column(name = "\"end\"")
-    private OffsetDateTime end;
+    private ZonedDateTime end;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "timetable")
     private List<Attendance> attendances = Lists.newArrayList();
@@ -33,13 +33,13 @@ public class Timetable implements Serializable {
     @Column(name = "type")
     private LessonType lessonType;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     Subject subject;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     Group group;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     Teacher teacher;
 
     @Override
@@ -64,20 +64,20 @@ public class Timetable implements Serializable {
         return this;
     }
 
-    public OffsetDateTime getStart() {
+    public ZonedDateTime getStart() {
         return start;
     }
 
-    public Timetable setStart(OffsetDateTime start) {
+    public Timetable setStart(ZonedDateTime start) {
         this.start = start;
         return this;
     }
 
-    public OffsetDateTime getEnd() {
+    public ZonedDateTime getEnd() {
         return end;
     }
 
-    public Timetable setEnd(OffsetDateTime end) {
+    public Timetable setEnd(ZonedDateTime end) {
         this.end = end;
         return this;
     }

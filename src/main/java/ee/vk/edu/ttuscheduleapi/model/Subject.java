@@ -18,7 +18,7 @@ public class Subject implements Serializable {
 
     private String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "subject")
     List<Timetable> timetables;
 
     @Override
